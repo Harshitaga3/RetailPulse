@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+shop_analytics/.env
+shop_analytics/instance/
+.vscode/
