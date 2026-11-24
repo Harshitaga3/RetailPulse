@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Your cart · RetailPulse{% endblock %}
+{% block content %}
+<h1>Your cart</h1>
+{% if not lines %}
+  <div class="empty"><p>Your cart is empty.</p><a class="button" href="{{ url_for('shop') }}">Browse products</a></div>
+{% else %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Product</th><th class="num">Price</th><th>Quantity</th><th class="num">Total</th></tr></thead>
+  <tbody>
+  {% for l in lines %}
+    <tr>
+      <td>{{ l.product.name }}</td>
+      <td class="num">{{ l.product.price|inr }}</td>
+      <td>
+        <form method="post" action="{{ url_for('cart_update', product_id=l.product.id) }}" class="inline">
+          <input class="qty" type="number" name="qty" min="0" max="10" value="{{ l.qty }}" aria-label="Quantity for {{ l.product.name }}">
+          <button class="secondary" type="submit">Update</button>
+        </form>
+      </td>
+      <td class="num">{{ l.total|inr }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="muted">Set a quantity to 0 to remove an item.</p>
+<div class="summary-line total" style="max-width:320px;margin-left:auto;"><span>Subtotal</span><span>{{ subtotal|inr }}</span></div>
+<p style="text-align:right"><a class="button" href="{{ url_for('checkout') }}">Go to checkout</a></p>
+{% endif %}
+{% endblock %}

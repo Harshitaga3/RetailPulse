@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Checkout · RetailPulse{% endblock %}
+{% block content %}
+<h1>Checkout</h1>
+<div class="two-col">
+  <form method="post" class="panel" novalidate>
+    <h2>Delivery and payment</h2>
+    <label for="name">Full name</label>
+    <input id="name" name="name" value="{{ form.get('name', '') }}" required>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" value="{{ form.get('email', '') }}" required>
+    <div class="row">
+      <div><label for="city">City</label><input id="city" name="city" value="{{ form.get('city', '') }}" required></div>
+      <div><label for="state">State</label><input id="state" name="state" value="{{ form.get('state', '') }}" required></div>
+    </div>
+    <label for="payment_method">Payment method</label>
+    <select id="payment_method" name="payment_method" required>
+      <option value="">Choose one</option>
+      {% for m in methods %}<option value="{{ m }}" {{ 'selected' if form.get('payment_method') == m }}>{{ m }}</option>{% endfor %}
+    </select>
+    <label for="coupon">Coupon code (optional)</label>
+    <input id="coupon" name="coupon" value="{{ form.get('coupon', '') }}">
+    <p><button type="submit">Place order</button></p>
+  </form>
+  <aside class="panel">
+    <h2>Order summary</h2>
+    {% for l in lines %}
+      <div class="summary-line"><span>{{ l.product.name }} × {{ l.qty }}</span><span>{{ l.total|inr }}</span></div>
+    {% endfor %}
+    <div class="summary-line total"><span>Subtotal</span><span>{{ subtotal|inr }}</span></div>
+    <p class="muted">Discounts are applied when you place the order.</p>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Order placed · RetailPulse{% endblock %}
+{% block content %}
+<h1>Order #{{ order.id }} is placed</h1>
+<p>Thanks, {{ order.customer.name }}. We'll email {{ order.customer.email }} when it ships.</p>
+<div class="panel" style="max-width:520px">
+  {% for i in order.items %}
+    <div class="summary-line"><span>{{ i.product.name }} × {{ i.quantity }}</span><span>{{ (i.unit_price * i.quantity)|inr }}</span></div>
+  {% endfor %}
+  {% if order.discount_amount %}
+    <div class="summary-line"><span>Discount ({{ order.coupon_code }})</span><span>−{{ order.discount_amount|inr }}</span></div>
+  {% endif %}
+  <div class="summary-line total"><span>Total</span><span>{{ order.total_amount|inr }}</span></div>
+  <p class="muted">Paid with {{ order.payment.method }} ({{ order.payment.status }}).</p>
+</div>
+<p><a class="button" href="{{ url_for('shop') }}">Keep shopping</a></p>
+{% endblock %}

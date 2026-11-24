@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Everyday things, well made</h1>
+<nav class="filters" aria-label="Categories">
+  <a href="{{ url_for('shop') }}" class="{{ 'active' if not active }}">All</a>
+  {% for c in categories %}
+    <a href="{{ url_for('shop', category=c.id) }}" class="{{ 'active' if active == c.id }}">{{ c.name }}</a>
+  {% endfor %}
+</nav>
+{% if not products %}
+  <div class="empty"><p>No products yet. Run <code>flask seed-products</code> or add some in the admin page.</p></div>
+{% else %}
+<div class="grid">
+  {% for p in products %}
+  <article class="product">
+    <div class="swatch" style="background: hsl({{ (p.category_id * 47) % 360 }}, 45%, 85%);">{{ p.category.name }}</div>
+    <div class="body">
+      <div class="name">{{ p.name }}</div>
+      <div class="price">{{ p.price|inr }}</div>
+      <div class="stock">{% if p.stock > 0 %}{{ p.stock }} in stock{% else %}Out of stock{% endif %}</div>
+      <form method="post" action="{{ url_for('cart_add', product_id=p.id) }}">
+        <button type="submit" {{ 'disabled' if p.stock <= 0 }}>Add to cart</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Admin · RetailPulse{% endblock %}
+{% block content %}
+<h1>Admin</h1>
+
+<h2>Add a product</h2>
+<form method="post" action="{{ url_for('admin_add_product') }}" class="panel">
+  <div class="row">
+    <div><label for="p-name">Name</label><input id="p-name" name="name" required></div>
+    <div><label for="p-cat">Category</label><input id="p-cat" name="category" list="cats" required>
+      <datalist id="cats">{% for c in categories %}<option value="{{ c.name }}">{% endfor %}</datalist></div>
+  </div>
+  <div class="row">
+    <div><label for="p-price">Selling price (₹)</label><input id="p-price" name="price" type="number" step="0.01" min="0" required></div>
+    <div><label for="p-cost">Cost price (₹)</label><input id="p-cost" name="cost" type="number" step="0.01" min="0" required></div>
+  </div>
+  <label for="p-stock">Stock</label><input id="p-stock" name="stock" type="number" min="0" required>
+  <p><button type="submit">Add product</button></p>
+</form>
+
+<h2 style="margin-top:36px">Latest orders</h2>
+{% if not orders %}
+  <p class="muted">No orders yet. Place one from the shop to see it here.</p>
+{% else %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>#</th><th>Date</th><th>Customer</th><th>City</th><th class="num">Total</th><th>Payment</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td>{{ o.id }}</td>
+      <td>{{ o.order_date.strftime('%d %b %Y, %H:%M') }}</td>
+      <td>{{ o.customer.name }}</td>
+      <td>{{ o.customer.city }}</td>
+      <td class="num">{{ o.total_amount|inr }}</td>
+      <td>{{ o.payment.method }} ({{ o.payment.status }})</td>
+      <td>
+        <form method="post" action="{{ url_for('admin_update_status', order_id=o.id) }}" class="inline">
+          <select name="status" aria-label="Status for order {{ o.id }}" style="width:auto">
+            {% for s in statuses %}<option value="{{ s }}" {{ 'selected' if o.status == s }}>{{ s }}</option>{% endfor %}
+          </select>
+          <button class="secondary" type="submit">Save</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+<h2 style="margin-top:36px">Products</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Name</th><th>Category</th><th class="num">Price</th><th class="num">Cost</th><th class="num">Stock</th></tr></thead>
+  <tbody>
+  {% for p in products %}
+    <tr><td>{{ p.name }}</td><td>{{ p.category.name }}</td><td class="num">{{ p.price|inr }}</td><td class="num">{{ p.cost|inr }}</td><td class="num">{{ p.stock }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

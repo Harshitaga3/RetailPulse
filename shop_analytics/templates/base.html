@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}RetailPulse{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="inner">
+      <a class="brand" href="{{ url_for('shop') }}">RetailPulse</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('cart_view') }}">Cart{% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}</a>
+      {% if is_admin %}
+        <a href="{{ url_for('admin') }}">Admin</a>
+        <form class="inline" method="post" action="{{ url_for('admin_logout') }}"><button class="link" type="submit">Log out</button></form>
+      {% else %}
+        <a href="{{ url_for('admin_login') }}">Admin</a>
+      {% endif %}
+    </div>
+  </header>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes" role="status">
+        {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
